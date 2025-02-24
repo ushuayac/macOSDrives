@@ -1,138 +1,70 @@
-# WIP update
-
-This update will align the drives to work with both Device Link and regular Mac processing. It will also include updates to allow us to install more recent OS versions.
-
-Also planning on including installers for older macOS versions. Not sure if this will be needed.
-
-Updates to the go.sh script:
-
-- Make it cleaner
-    
-- Format the Macs drive to APFS and name it Macintosh HD instead of Mac HD (no need to go into disk utility)
-    
-- Include options for launching installers from terminal in addition to ASR installation (in case ASR isn’t working)
-    
-- Include command to clear SMC and NVRAM and reboot at the end instead of just reboot
-    
-- Add auto reboot if ASR works
-    
-- Checks for internet before running ES or Sequoia ASR
-    
-
-Updates to cat boot
-
-- Installed Firefox because Chrome is no longer getting security updates
-    
-- Considering [<ins>Stats</ins>](https://github.com/exelban/stats) instead of iStat Menus because it’s free and open source
-    
+# Current
 
 ## Drive set up
 
-- Partition 1 : (~6.3GB) : El Capitan USB Installer - Use this to boot <=2012 devices
-  - May not be necessary at all  
-  - If an older OS install is needed, it might be better to run the installer application from recovery mode instead
+- Test Boot partition (APFS - 35GB)
     
-- Partition 2 : (~14GB) : Big Sur USB Installer - Use this to boot <=2017 devices
+- Sonoma installer
     
-- Partition 3 : (~16GB) : Sonoma USB Installer
+- Ventura installer
     
-- Partition 4 : (~18GB) : Sequoia USB Installer
+- Monterey installer
     
-- Partition 5 : Full OS Installers: 
-  - Create a ~80-100GB partition named FULL of type APFS
-  - After creating the FULL partition, create a directory named Applications within it.
-  - Within the Applications directory download the following full macOS installer apps
-    - El Capitan? (~6.3GB) El Capitan isn’t compatible with APFS, so there’s no point in putting the installer in an APFS volume. Just having a bootable installer should be fine if we need it.
+- Big Sur installer
     
-    - High Sierra? (~5.3GB)
+- Catalina installer
     
-    - Catalina (~8.3GB)
+- “e” partition
     
-    - Big Sur (~12.5GB)
+- Cat.dmg image (test boot for ES)
     
-    - Monterey (~12.5GB)
+- go.sh script (ASR script with options for our ES image, big sur image, monterey image, and ventura image
     
-    - Ventura (~12.5GB)
+- es.sh script for ES only
     
-    - Sonoma (~13.7GB)
+- “s” partition containing Sonoma image that doesn’t work
     
-    - Sequoia (~14.5GB)
+- “v” partition containing Ventura image
     
-  - Create a directory named Scripts directory within the FULL partition
+- “m” partition containing Monterey image
     
-  - Put go.sh in the Scripts directory
-    
-- Partition 6 : ASR Images: (~125GB)
-    
-  - Create a partition named ASR of type MacOS Extended Journaled. Size of this partition is variable (based on the total size of your ASR images).
-    
-- Partition 7: Cat Boot / Test Boot : APFS partition with bootable Catalina for testing
+- “b” partition containing Big Sur image
     
 
-## Script Breakdown
+## ES
 
-- Formats drive0 as APFS and names it Macintosh HD
+1.  Boot to recovery mode
     
-- Gets input to determine ES, OS install, or reboot
+2.  Ensure connected to internet
     
-- ES uses ASR restore command to restore cat.dmg to Macintosh HD
+3.  Open terminal
     
-- OS install gets input to determine OS version and install method
-    
-- ASR install will use ASR restore command to restore matching OS image to user input
-    
-- Manual install will run install application from FULL/Applications folder
-    
-- Manual install will reboot automatically
-    
-- ES and ASR OS will reboot automatically if ASR command is successful
-    
-- Reboot will reset SMC, clear NVRAM, then reboot
+4.  Type:
     
 
-## Sequoia ASR install
+sh /Volumes/e/go.sh
 
-### Run Script
-
-1.  Boot to Sequoia installer. Other installers will probably work, but the Sequoia installer is recommended to ensure compatibility.
+5.  Input 1 for elevated security
     
-2.  Connect to WiFi or plug in ethernet
-    
-3.  Open the terminal
-    
-4.  Type sh /Volumes/FULL/Scripts/go2.sh
-    
-5.  Input 2 for install OS
-    
-6.  Input 1 for Sequoia
-    
-7.  Input 1 for ASR
-    
-8.  Once it completes, input 3 for reboot
+6.  Restart when completed
     
 
-### Set Startup Security to Full
+## OS Installation
 
-9.  Log in to open account with the password “open”
+1.  Boot to an installer (either to os you wish to install, or a previous version. Some techs prefer the big sur installer)
     
-10. Reboot to recovery mode by holding command + r when booting
+2.  Open terminal
     
-11. Click Utilities > Startup Security Utility
-    
-12. Enter the password “open”
-    
-13. Set the security to Full security. You can leave allow booting to external media
-    
-14. Choose Macintosh HD as the boot drive
+3.  Type:
     
 
-### Erase all contents and settings
+sh /Volumes/e/go.sh
 
-15. Reboot into open account
+4.  &nbsp;Input 2 for OS install
     
-16. Press command + spacebar
+5.  Input option for OS you wish to install (sonoma doesn’t work)
     
-17. Type in Erase all contents and settings
+6.  Restart when completed
     
 18. Click on the settings option
     
