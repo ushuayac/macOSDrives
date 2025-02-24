@@ -26,7 +26,7 @@ until [ "$OFF" == 1 ]; do
 		diskutil apfs convert disk0
 		asr restore -s "/Volumes/m/monterey.dmg" -t "/Volumes/Mac hd" --erase --noverify --noprompt
 			echo 'process completed please shutdown computer!'
-		elif [ "$useros" == 3 ]; then
+		elif [ "$useros" == 4 ]; then
 		diskutil eraseDisk JHFS+ Mac\ hd /dev/disk0
 		diskutil apfs convert disk0
 		asr restore -s "/Volumes/b/bigsur.dmg" -t "/Volumes/Mac hd" --erase --noverify --noprompt
