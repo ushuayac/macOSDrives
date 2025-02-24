@@ -1,12 +1,12 @@
 #!/bin/bash 
 cd ../../
-OFF = 0
+userShutDown = 0
 
 #format drive
 diskutil  unmountDisk force disk0
 diskutil eraseDisk APFS Macintosh\ HD disk0
 
-until [ "$OFF" == 1 ]; do
+until [ "$userShutDown" == 1 ]; do
 	echo "Welcome! What would you like to do 1.Elevated Security 2.Install OS 3.Restart?" 
 	read userinput
 	
@@ -106,7 +106,7 @@ until [ "$OFF" == 1 ]; do
 
 	#Shutdown
 	elif [ "$userinput" == 3 ]; then
-	OFF = 1
+	userShutDown = 1
 	
 	echo "Restarting" 
 	pmset -a restoredefaults && nvram -c && reboot	
