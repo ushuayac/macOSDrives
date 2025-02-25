@@ -37,10 +37,7 @@
     
 3.  Open terminal
     
-4.  Type:
-    
-
-sh /Volumes/e/go.sh
+4.  Type: `sh /Volumes/e/go.sh`
 
 5.  Input 1 for elevated security
     
@@ -53,18 +50,11 @@ sh /Volumes/e/go.sh
     
 2.  Open terminal
     
-3.  Type:
-    
+3.  Type: `sh /Volumes/e/go.sh`
 
-sh /Volumes/e/go.sh
-
-4.  &nbsp;Input 2 for OS install
+4.  Input 2 for OS install
     
 5.  Input option for OS you wish to install (sonoma doesn’t work)
     
 6.  Restart when completed
-    
-18. Click on the settings option
-    
-19. Run erase all contents and settings
     
