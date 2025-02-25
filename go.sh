@@ -31,10 +31,12 @@ until [ "$userShutDown" == 1 ]; do
 	elif [ "$userinput" == 2 ]; then
 		userOS=0
 		userMethod=0
-		echo "Please choose your OS: 1. Sequoia 2. Sonoma 3. Ventura 4. Monterey 5.Big Sur" 
-		read userOS
-		echo "Please choose your installation method: 1. ASR 2. Manual install"
-		read userMethod
+		echo "Please choose your OS: 1. Sequoia 2. Sonoma 3. Ventura 4. Monterey 5.Big Sur" #add 6. Catalina 7. High Sierra
+		read userOS 
+  		#should there be input validation here?
+		echo "Please choose your installation method: 1. ASR 2. Manual install" #maybe decide which OS gets ASR image, add if statement so only asks if actually has image
+		read userMethod 
+  		#should there be input validation here?
 
 		#Sequoia
 		if (( "$userOS" == 1 &&  "$userMethod" == 1 )); then
@@ -97,8 +99,12 @@ until [ "$userShutDown" == 1 ]; do
 		elif (( "$userOS" == 5 & "$userMethod" == 2 )); then
 			echo "Big Sur manual install"
 			./Volumes/FULL/Applications/Install\ macOS\ Big\ Sur.app/Contents/MacOS/InstallAssistant
-
-		else
+   		
+		#Catalina
+		
+    		#High Sierra
+		
+  		else
 			echo "invalid choice"
 			
 		fi
@@ -112,6 +118,8 @@ until [ "$userShutDown" == 1 ]; do
 	pmset -a restoredefaults && nvram -c && reboot	
 
 	exit
+
+ 	#else statement for input validation? already just loops, but maybe say something about invalid input
 	fi
 done
 exit
