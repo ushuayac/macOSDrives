@@ -15,12 +15,10 @@
 - Catalina installer
     
 - “e” partition
-    
-- Cat.dmg image (test boot for ES)
-    
-- go.sh script (ASR script with options for our ES image, big sur image, monterey image, and ventura image
-    
-- es.sh script for ES only
+    - Cat.dmg image (test boot for ES)
+    - go.sh script (ASR script with options for our ES image, big sur image, monterey image, and ventura image
+    - es.sh script for ES only
+    - All other scripts
     
 - “s” partition containing Sonoma image that doesn’t work
     
