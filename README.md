@@ -33,15 +33,15 @@
 
 1.  Boot to recovery mode
     
-2.  Ensure connected to internet
+2.  Connect to internet
     
-3.  Open terminal
+4.  Open terminal
     
-4.  Type: `sh /Volumes/e/go.sh`
+5.  Type: `sh /Volumes/e/go.sh`
 
-5.  Input 1 for elevated security
+6.  Input 1 for elevated security
     
-6.  Restart when completed
+7.  Restart when completed
     
 
 ## OS Installation
