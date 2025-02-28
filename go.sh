@@ -54,7 +54,7 @@ until [ "$userShutDown" == 1 ]; do
 			fi
 		elif (( "$userOS" == 1  &&  "$userMethod" == 2 )); then
 			echo "Sequoia manual install"
-			./Volumes/FULL/Applications/Install\ macOS\ Sequoia.app/Contents/MacOS/InstallAssistant
+			./Volumes/FULL/Applications/Install\ macOS\ Sequoia.app/Contents/Resources/startosinstall --agreetolicense --volume /Volumes/Macintosh\ HD
 
 		#Sonoma
 		elif (( "$userOS" == 2 && "$userMethod" == 1 )); then
@@ -65,7 +65,7 @@ until [ "$userShutDown" == 1 ]; do
 			fi
 		elif (( "$userOS" == 2 & "$userMethod" == 2 )); then
 			echo "Sonoma manual install"
-			./Volumes/FULL/Applications/Install\ macOS\ Sonoma.app/Contents/MacOS/InstallAssistant
+			./Volumes/FULL/Applications/Install\ macOS\ Sonoma.app/Contents/Resources/startosinstall --agreetolicense --volume /Volumes/Macintosh\ HD
 			
 		#Ventura
 		elif (( "$userOS" == 3 & "$userMethod" == 1 )); then
@@ -76,7 +76,7 @@ until [ "$userShutDown" == 1 ]; do
 			fi
 		elif (( "$userOS" == 3 & "$userMethod" == 2 )); then
 			echo "Ventura manual install"
-			./Volumes/FULL/Applications/Install\ macOS\ Ventura.app/Contents/MacOS/InstallAssistant
+			./Volumes/FULL/Applications/Install\ macOS\ Ventura.app/Contents/Resources/startosinstall --agreetolicense --volume /Volumes/Macintosh\ HD
 			
 		#Moneterey
 		elif (( "$userOS" == 4 & "$userMethod" == 1 )); then
@@ -87,7 +87,7 @@ until [ "$userShutDown" == 1 ]; do
 			fi
 		elif (( "$userOS" == 4 & "$userMethod" == 2 )); then
 			echo "Monterey manual install"
-			./Volumes/FULL/Applications/Install\ macOS\ Monterey.app/Contents/MacOS/InstallAssistant
+			./Volumes/FULL/Applications/Install\ macOS\ Monterey.app/Contents/Resources/startosinstall --agreetolicense --volume /Volumes/Macintosh\ HD
 		
 		#Big Sur
 		elif (( "$userOS" == 5 & "$userMethod" == 1 )); then
@@ -98,6 +98,9 @@ until [ "$userShutDown" == 1 ]; do
 			fi
 		elif (( "$userOS" == 5 & "$userMethod" == 2 )); then
 			echo "Big Sur manual install"
+			./Volumes/FULL/Applications/Install\ macOS\ Big\ Sur.app/Contents/Resources/startosinstall --agreetolicense --volume /Volumes/Macintosh\ HD
+
+		else
 			./Volumes/FULL/Applications/Install\ macOS\ Big\ Sur.app/Contents/MacOS/InstallAssistant
    		
 		#Catalina
