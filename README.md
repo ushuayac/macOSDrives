@@ -21,7 +21,7 @@ Updates to the go.sh script:
 
 Updates to cat boot
 
-- Installed Firefox because Chrome is no longer getting security updates
+- ~~Installed Firefox because Chrome is no longer getting security updates~~ Firefox has issues with the keyboard in retest.us. Went back to using old version of Chrome, other option is to use Safari
     
 - Considering [<ins>Stats</ins>](https://github.com/exelban/stats) instead of iStat Menus because it’s free and open source
     
