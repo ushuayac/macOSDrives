@@ -111,21 +111,21 @@ select_install_method() {
 # Install macOS
 install_os() {
     # Create associative arrays for file paths
-    declare -A asr_images
+    declare -a asr_images
     asr_images[1]="sequoia.dmg"
     asr_images[2]="sonoma.dmg"
     asr_images[3]="ventura.dmg"
     asr_images[4]="monterey.dmg"
     asr_images[5]="bigsur.dmg"
     
-    declare -A installers
+    declare -a installers
     installers[1]="Install macOS Sequoia.app"
     installers[2]="Install macOS Sonoma.app"
     installers[3]="Install macOS Ventura.app"
     installers[4]="Install macOS Monterey.app"
     installers[5]="Install macOS Big Sur.app"
     
-    declare -A os_names
+    declare -a os_names
     os_names[1]="Sequoia"
     os_names[2]="Sonoma"
     os_names[3]="Ventura"
@@ -176,7 +176,6 @@ quit_script() {
 # Main Menu Function
 main_menu() {
     until [ "$userShutDown" = 1 ]; do
-        clear
         echo "===== macOS Installation and Recovery Tool ====="
         echo "1. Elevated Security"
         echo "2. Install OS"
