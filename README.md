@@ -8,7 +8,9 @@ Updates to the go.sh script:
 
 - Make it cleaner
     
-- Format the Macs drive to APFS and name it Macintosh HD instead of Mac HD (no need to go into disk utility)
+- Format the Macs drive to APFS and name it Macintosh HD
+    - changed from Mac HD
+    - Eliminates need to go into disk utility
     
 - Include options for launching installers from terminal in addition to ASR installation (in case ASR isn’t working)
     
