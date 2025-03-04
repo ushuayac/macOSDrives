@@ -42,7 +42,7 @@ Updates to cat boot
   - Create a ~80-100GB partition named FULL of type APFS
   - After creating the FULL partition, create a directory named Applications within it.
   - Within the Applications directory download the following full macOS installer apps
-    - El Capitan? (~6.3GB) El Capitan isn’t compatible with APFS, so there’s no point in putting the installer in an APFS volume. Just having a bootable installer should be fine if we need it.
+    - ~El Capitan? (6.3GB)~ El Capitan isn’t compatible with APFS, so there’s no point in putting the installer in an APFS volume. Just having a bootable installer should be fine if we need it.
     
     - High Sierra? (~5.3GB)
     
