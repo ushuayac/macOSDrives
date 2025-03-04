@@ -100,12 +100,17 @@ select_os() {
 
 # Prompt for installation method
 select_install_method() {
-    echo "Choose installation method: 1. ASR 2. Manual install"
-    read userMethod
-    while ! [[ "$userMethod" =~ ^[1-2]$ ]]; do
-        echo "Invalid selection. Please enter 1 for ASR or 2 for Manual install."
+    
+    if [ $userOS -le 5 ] ; then
+        echo "Choose installation method: 1. ASR 2. Manual install"
         read userMethod
-    done
+        while ! [[ "$userMethod" =~ ^[1-2]$ ]]; do
+            echo "Invalid selection. Please enter 1 for ASR or 2 for Manual install."
+            read userMethod
+        done
+    else 
+        userMethod=2
+    fi
 }
 
 # Install macOS
@@ -124,13 +129,18 @@ install_os() {
     installers[3]="Install macOS Ventura.app"
     installers[4]="Install macOS Monterey.app"
     installers[5]="Install macOS Big Sur.app"
+    installers[6]="Install macOS Catalina.app"
+    installers[7]="Install macOS High Sierra.app"
+
     
     declare -a os_names
     os_names[1]="Sequoia"
     os_names[2]="Sonoma"
     os_names[3]="Ventura"
     os_names[4]="Monterey"
-    os_names[5]="Big Sur"    
+    os_names[5]="Big Sur"
+    os_names[6]="Catalina"
+    os_names[7]="High Sierra"  
 
     select_os
     select_install_method
