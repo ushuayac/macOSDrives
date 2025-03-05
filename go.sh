@@ -86,13 +86,14 @@ elevated_security() {
 # Prompt for OS selection
 select_os() {
     
+    echo 
     echo "Please choose your OS:"
     for key in $(echo ${!os_names[@]} | tr ' ' '\n' | sort -n); do
         echo "$key: ${os_names[$key]}"
     done
     read userOS
     
-    while ! [[ "$userOS" =~ ^[1-5]$ ]]; do
+    while ! [[ "$userOS" =~ ^[1-7]$ ]]; do
         echo "Invalid selection. Please enter a number from 1 to ${#os_names[@]}."
         read userOS
     done
@@ -102,6 +103,7 @@ select_os() {
 select_install_method() {
     
     if [ $userOS -le 5 ] ; then
+        echo
         echo "Choose installation method: 1. ASR 2. Manual install"
         read userMethod
         while ! [[ "$userMethod" =~ ^[1-2]$ ]]; do
@@ -146,8 +148,8 @@ install_os() {
     select_install_method
 
     
-    
-    echo "${os_names[$userOS]} installation"
+    echo "==== starting OS installation===="    
+
 
     # For Sequoia installation, check internet connection first
     if [[ "$userOS" == 1 ]]; then
@@ -186,6 +188,7 @@ quit_script() {
 # Main Menu Function
 main_menu() {
     until [ "$userShutDown" = 1 ]; do
+        echo 
         echo "===== macOS Installation and Recovery Tool ====="
         echo "1. Elevated Security"
         echo "2. Install OS"
