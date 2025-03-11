@@ -6,12 +6,12 @@
 # https://github.com/nkerschner/macOSDrives
 
 cd /
-userShutDown=0
+userQuit=0
 
 # declare default paths
 ASR_IMAGE_PATH="/Volumes/ASR/"
 INSTALLER_VOLUME_PATH="/Volumes/FULL/Applications/"
-RECOVERY_VOLUME_PATH="/Volumes/Cat Boot"
+ES_SOURCE_PATH="/Volumes/ASR/cat.dmg"
 INTERNAL_VOLUME_NAME="Macintosh HD"
 INTERNAL_VOLUME_PATH="/Volumes/Macintosh HD"
 
@@ -80,7 +80,7 @@ run_manual_install() {
 # Elevated Security
 elevated_security() {
     check_internet
-    run_asr_restore "$RECOVERY_VOLUME_PATH"
+    run_asr_restore "$ES_SOURCE_PATH"
 }
 
 # Prompt for OS selection
@@ -182,12 +182,12 @@ restart_system() {
 # Quit the script
 quit_script() {
     echo "Exiting script..."
-    userShutDown=1  # Ensures the loop in main_menu exits cleanly
+    userQuit=1  # Ensures the loop in main_menu exits cleanly
 }
 
 # Main Menu Function
 main_menu() {
-    until [ "$userShutDown" = 1 ]; do
+    until [ "$userQuit" = 1 ]; do
         echo 
         echo "===== macOS Installation and Recovery Tool ====="
         echo "1. Elevated Security"
