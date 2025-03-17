@@ -2,7 +2,7 @@
 
 
 # macOS Installation and Elevated Security Removal Tool
-# v2.0-beta
+# v2.1-beta
 # https://github.com/nkerschner/macOSDrives
 
 cd /
