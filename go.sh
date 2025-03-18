@@ -148,7 +148,7 @@ install_os() {
     select_install_method
 
     
-    echo "==== starting OS installation===="    
+    echo "==== starting OS installation ===="    
 
 
     # For Sequoia installation, check internet connection first
@@ -160,7 +160,7 @@ install_os() {
         echo "${os_names[$userOS]} ASR install"
         run_asr_restore "$ASR_IMAGE_PATH${asr_images[$userOS]}"
     elif [[ "$userMethod" == 2 ]]; then
-        echo "${os_names[$userOS]} manual install"
+        echo "selected ${os_names[$userOS]} manual install"
         run_manual_install "${installers[$userOS]}"
     fi
 }
