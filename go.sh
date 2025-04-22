@@ -49,6 +49,11 @@ format_disk() {
     diskutil eraseDisk APFS "$INTERNAL_VOLUME_NAME" "$INTERNAL_DISK"
 }
 
+# Perform SMC reset and NVRAM clear
+clear_smcnvram() {
+    pmset -a restoredefaults && nvram -c
+}
+
 # Check for an internet connection
 check_internet() {
     echo "Checking for internet connection..."
@@ -73,6 +78,10 @@ run_asr_restore() {
 # Perform install through application
 run_manual_install() {
     local installer_path="$1"
+
+    echo "Resetting SMC and clearing NVRAM"
+    clear_smcnvram
+
     echo "Starting manual install"
     "$INSTALLER_VOLUME_PATH$installer_path/Contents/Resources/startosinstall" --agreetolicense --volume "$INTERNAL_VOLUME_PATH"
 }
@@ -168,7 +177,7 @@ install_os() {
 # Restart system after resetting SMC and clearing NVRAM
 restart_system() {
     echo "Restarting..."
-    pmset -a restoredefaults && nvram -c
+    clear_smcnvram
     reboot
     
     #try harder if didn't restart after 30 seconds
@@ -193,7 +202,8 @@ main_menu() {
         echo "1. Elevated Security"
         echo "2. Install OS"
         echo "3. Restart System"
-        echo "4. Quit"
+        echo "4. Reset SMC and Clear NVRAM"
+        echo "5. Quit"
         echo "================================================"
         read -p "Enter your choice (1-4): " userinput
 
@@ -201,7 +211,8 @@ main_menu() {
             1) elevated_security ;;
             2) install_os ;;
             3) restart_system ;;
-            4) quit_script ;;
+            4) clear_smcnvram ;;
+            5) quit_script ;;
             *) echo "Invalid choice. Please enter 1, 2, 3, or 4." ;;
         esac
     done
