@@ -2,16 +2,16 @@
 
 
 # macOS Installation and Elevated Security Removal Tool
-# v2.0-beta
+# v2.1-beta
 # https://github.com/nkerschner/macOSDrives
 
 cd /
-userShutDown=0
+userQuit=0
 
 # declare default paths
 ASR_IMAGE_PATH="/Volumes/ASR/"
 INSTALLER_VOLUME_PATH="/Volumes/FULL/Applications/"
-RECOVERY_VOLUME_PATH="/Volumes/Cat Boot"
+ES_SOURCE_PATH="/Volumes/ASR/cat.dmg"
 INTERNAL_VOLUME_NAME="Macintosh HD"
 INTERNAL_VOLUME_PATH="/Volumes/Macintosh HD"
 
@@ -80,19 +80,20 @@ run_manual_install() {
 # Elevated Security
 elevated_security() {
     check_internet
-    run_asr_restore "$RECOVERY_VOLUME_PATH"
+    run_asr_restore "$ES_SOURCE_PATH"
 }
 
 # Prompt for OS selection
 select_os() {
     
+    echo 
     echo "Please choose your OS:"
     for key in $(echo ${!os_names[@]} | tr ' ' '\n' | sort -n); do
         echo "$key: ${os_names[$key]}"
     done
     read userOS
     
-    while ! [[ "$userOS" =~ ^[1-5]$ ]]; do
+    while ! [[ "$userOS" =~ ^[1-7]$ ]]; do
         echo "Invalid selection. Please enter a number from 1 to ${#os_names[@]}."
         read userOS
     done
@@ -100,12 +101,18 @@ select_os() {
 
 # Prompt for installation method
 select_install_method() {
-    echo "Choose installation method: 1. ASR 2. Manual install"
-    read userMethod
-    while ! [[ "$userMethod" =~ ^[1-2]$ ]]; do
-        echo "Invalid selection. Please enter 1 for ASR or 2 for Manual install."
+    
+    if [ $userOS -le 5 ] ; then
+        echo
+        echo "Choose installation method: 1. ASR 2. Manual install"
         read userMethod
-    done
+        while ! [[ "$userMethod" =~ ^[1-2]$ ]]; do
+            echo "Invalid selection. Please enter 1 for ASR or 2 for Manual install."
+            read userMethod
+        done
+    else 
+        userMethod=2
+    fi
 }
 
 # Install macOS
@@ -124,20 +131,25 @@ install_os() {
     installers[3]="Install macOS Ventura.app"
     installers[4]="Install macOS Monterey.app"
     installers[5]="Install macOS Big Sur.app"
+    installers[6]="Install macOS Catalina.app"
+    installers[7]="Install macOS High Sierra.app"
+
     
     declare -a os_names
     os_names[1]="Sequoia"
     os_names[2]="Sonoma"
     os_names[3]="Ventura"
     os_names[4]="Monterey"
-    os_names[5]="Big Sur"    
+    os_names[5]="Big Sur"
+    os_names[6]="Catalina"
+    os_names[7]="High Sierra"  
 
     select_os
     select_install_method
 
     
-    
-    echo "${os_names[$userOS]} installation"
+    echo "==== starting OS installation ===="    
+
 
     # For Sequoia installation, check internet connection first
     if [[ "$userOS" == 1 ]]; then
@@ -148,7 +160,7 @@ install_os() {
         echo "${os_names[$userOS]} ASR install"
         run_asr_restore "$ASR_IMAGE_PATH${asr_images[$userOS]}"
     elif [[ "$userMethod" == 2 ]]; then
-        echo "${os_names[$userOS]} manual install"
+        echo "selected ${os_names[$userOS]} manual install"
         run_manual_install "${installers[$userOS]}"
     fi
 }
@@ -170,12 +182,13 @@ restart_system() {
 # Quit the script
 quit_script() {
     echo "Exiting script..."
-    userShutDown=1  # Ensures the loop in main_menu exits cleanly
+    userQuit=1  # Ensures the loop in main_menu exits cleanly
 }
 
 # Main Menu Function
 main_menu() {
-    until [ "$userShutDown" = 1 ]; do
+    until [ "$userQuit" = 1 ]; do
+        echo 
         echo "===== macOS Installation and Recovery Tool ====="
         echo "1. Elevated Security"
         echo "2. Install OS"
