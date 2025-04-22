@@ -89,6 +89,7 @@ run_manual_install() {
 # Elevated Security
 elevated_security() {
     check_internet
+    format_disk
     run_asr_restore "$ES_SOURCE_PATH"
 }
 
@@ -156,6 +157,8 @@ install_os() {
     select_os
     select_install_method
 
+    format_disk
+
     
     echo "==== starting OS installation ===="    
 
@@ -220,6 +223,5 @@ main_menu() {
 
 # Run the script
 get_internal_disk
-format_disk
 main_menu
 
