@@ -18,7 +18,7 @@ INTERNAL_VOLUME_PATH="/Volumes/Macintosh HD"
 
 # Get the internal disk
 get_internal_disk() {
-    echo "Detecting internal disks..."
+    echo "==== detecting internal disks ===="
     INTERNAL_DISKS=($(diskutil list internal physical | awk '/^\/dev\// && !/disk[0-9]s[0-9]/ {print $1}'))
 
     if [ ${#INTERNAL_DISKS[@]} -eq 0 ]; then
@@ -40,6 +40,7 @@ get_internal_disk() {
     fi
 
     echo "Selected disk: $INTERNAL_DISK"
+    echo
 }
 
 
@@ -55,24 +56,27 @@ format_disk() {
 
 # Perform SMC reset and NVRAM clear
 clear_smcnvram() {
+    echo "==== resetting SMC and clearing NVRAM ===="
     pmset -a restoredefaults && nvram -c
+    echo ""
 }
 
 # Check for an internet connection
 check_internet() {
-    echo "Checking for internet connection..."
+    echo "Checking for internet connection...."
     while ! ping -c 1 -t 5 1.1.1.1 >/dev/null 2>&1; do
         echo "No internet connection detected."
         read -n 1 -s -r -p "Please connect to the internet then press enter: "
     done
     echo "Internet connection detected."
+    echo ""
 }
 
 # Perform ASR restore
 run_asr_restore() {
     local source_image=$1
     if asr restore -s "$source_image" -t "$INTERNAL_VOLUME_PATH" --erase --noverify --noprompt; then
-        echo "ASR restore successful. Restarting..."
+        echo "ASR restore successful. restarting..."
         restart_system
     else
         echo "ASR restore failed! Please check the source image and try again."
@@ -83,7 +87,6 @@ run_asr_restore() {
 run_manual_install() {
     local installer_path="$1"
 
-    echo "Resetting SMC and clearing NVRAM"
     clear_smcnvram
 
     echo "Starting manual install"
@@ -183,7 +186,7 @@ install_os() {
 
 # Restart system after resetting SMC and clearing NVRAM
 restart_system() {
-    echo "Restarting..."
+    echo "restarting..."
     clear_smcnvram
     reboot
     
