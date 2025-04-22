@@ -45,8 +45,12 @@ get_internal_disk() {
 
 # Format the disk
 format_disk() {
+    echo "==== formatting disk ===="
+
     diskutil unmountDisk force "$INTERNAL_DISK"
     diskutil eraseDisk APFS "$INTERNAL_VOLUME_NAME" "$INTERNAL_DISK"
+
+    echo ""
 }
 
 # Perform SMC reset and NVRAM clear
@@ -221,7 +225,7 @@ main_menu() {
     done
 }
 
-# Run the script
+# Main
 get_internal_disk
 main_menu
 
