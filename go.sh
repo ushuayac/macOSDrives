@@ -215,7 +215,7 @@ main_menu() {
         echo "4. Reset SMC and Clear NVRAM"
         echo "5. Quit"
         echo "================================================"
-        read -p "Enter your choice (1-4): " userinput
+        read -p "Enter your choice (1-5): " userinput
 
         case $userinput in
             1) elevated_security ;;
