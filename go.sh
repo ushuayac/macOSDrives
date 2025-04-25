@@ -18,7 +18,7 @@ INTERNAL_VOLUME_PATH="/Volumes/Macintosh HD"
 
 # Get the internal disk
 get_internal_disk() {
-    echo "Detecting internal disks..."
+    echo "==== detecting internal disks ===="
     INTERNAL_DISKS=($(diskutil list internal physical | awk '/^\/dev\// && !/disk[0-9]s[0-9]/ {print $1}'))
 
     if [ ${#INTERNAL_DISKS[@]} -eq 0 ]; then
@@ -40,30 +40,43 @@ get_internal_disk() {
     fi
 
     echo "Selected disk: $INTERNAL_DISK"
+    echo
 }
 
 
 # Format the disk
 format_disk() {
+    echo "==== formatting disk ===="
+
     diskutil unmountDisk force "$INTERNAL_DISK"
     diskutil eraseDisk APFS "$INTERNAL_VOLUME_NAME" "$INTERNAL_DISK"
+
+    echo ""
+}
+
+# Perform SMC reset and NVRAM clear
+clear_smcnvram() {
+    echo "==== resetting SMC and clearing NVRAM ===="
+    pmset -a restoredefaults && nvram -c
+    echo ""
 }
 
 # Check for an internet connection
 check_internet() {
-    echo "Checking for internet connection..."
+    echo "Checking for internet connection...."
     while ! ping -c 1 -t 5 1.1.1.1 >/dev/null 2>&1; do
         echo "No internet connection detected."
         read -n 1 -s -r -p "Please connect to the internet then press enter: "
     done
     echo "Internet connection detected."
+    echo ""
 }
 
 # Perform ASR restore
 run_asr_restore() {
     local source_image=$1
     if asr restore -s "$source_image" -t "$INTERNAL_VOLUME_PATH" --erase --noverify --noprompt; then
-        echo "ASR restore successful. Restarting..."
+        echo "ASR restore successful. restarting..."
         restart_system
     else
         echo "ASR restore failed! Please check the source image and try again."
@@ -73,6 +86,9 @@ run_asr_restore() {
 # Perform install through application
 run_manual_install() {
     local installer_path="$1"
+
+    clear_smcnvram
+
     echo "Starting manual install"
     "$INSTALLER_VOLUME_PATH$installer_path/Contents/Resources/startosinstall" --agreetolicense --volume "$INTERNAL_VOLUME_PATH"
 }
@@ -80,6 +96,7 @@ run_manual_install() {
 # Elevated Security
 elevated_security() {
     check_internet
+    format_disk
     run_asr_restore "$ES_SOURCE_PATH"
 }
 
@@ -147,6 +164,8 @@ install_os() {
     select_os
     select_install_method
 
+    format_disk
+
     
     echo "==== starting OS installation ===="    
 
@@ -167,8 +186,8 @@ install_os() {
 
 # Restart system after resetting SMC and clearing NVRAM
 restart_system() {
-    echo "Restarting..."
-    pmset -a restoredefaults && nvram -c
+    echo "restarting..."
+    clear_smcnvram
     reboot
     
     #try harder if didn't restart after 30 seconds
@@ -193,22 +212,23 @@ main_menu() {
         echo "1. Elevated Security"
         echo "2. Install OS"
         echo "3. Restart System"
-        echo "4. Quit"
+        echo "4. Reset SMC and Clear NVRAM"
+        echo "5. Quit"
         echo "================================================"
-        read -p "Enter your choice (1-4): " userinput
+        read -p "Enter your choice (1-5): " userinput
 
         case $userinput in
             1) elevated_security ;;
             2) install_os ;;
             3) restart_system ;;
-            4) quit_script ;;
+            4) clear_smcnvram ;;
+            5) quit_script ;;
             *) echo "Invalid choice. Please enter 1, 2, 3, or 4." ;;
         esac
     done
 }
 
-# Run the script
+# Main
 get_internal_disk
-format_disk
 main_menu
 
