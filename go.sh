@@ -121,10 +121,10 @@ select_install_method() {
     
     if [ $userOS -le 5 ] ; then
         echo
-        echo "Choose installation method: 1. ASR 2. Manual install"
+        echo "Choose installation method: 1. ASR 2. Installer Application"
         read userMethod
         while ! [[ "$userMethod" =~ ^[1-2]$ ]]; do
-            echo "Invalid selection. Please enter 1 for ASR or 2 for Manual install."
+            echo "Invalid selection. Please enter 1 for ASR or 2 for Installer Application."
             read userMethod
         done
     else 
