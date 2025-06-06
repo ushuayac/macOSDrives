@@ -100,9 +100,92 @@ elevated_security() {
     run_asr_restore "$ES_SOURCE_PATH"
 }
 
+# Check which files exist and build available options
+build_available_options() {
+    # Define all possible OS options
+    declare -A all_asr_images
+    all_asr_images[1]="sequoia.dmg"
+    all_asr_images[2]="sonoma.dmg"
+    all_asr_images[3]="ventura.dmg"
+    all_asr_images[4]="monterey.dmg"
+    all_asr_images[5]="bigsur.dmg"
+    
+    declare -A all_installers
+    all_installers[1]="Install macOS Sequoia.app"
+    all_installers[2]="Install macOS Sonoma.app"
+    all_installers[3]="Install macOS Ventura.app"
+    all_installers[4]="Install macOS Monterey.app"
+    all_installers[5]="Install macOS Big Sur.app"
+    all_installers[6]="Install macOS Catalina.app"
+    all_installers[7]="Install macOS High Sierra.app"
+
+    declare -A all_os_names
+    all_os_names[1]="Sequoia"
+    all_os_names[2]="Sonoma"
+    all_os_names[3]="Ventura"
+    all_os_names[4]="Monterey"
+    all_os_names[5]="Big Sur"
+    all_os_names[6]="Catalina"
+    all_os_names[7]="High Sierra"
+
+    # Clear existing arrays
+    unset available_options
+    unset asr_images
+    unset installers
+    unset os_names
+    
+    declare -g -A available_options
+    declare -g -A asr_images
+    declare -g -A installers
+    declare -g -A os_names
+    
+    local option_counter=1
+    
+    # Check each OS option
+    for original_key in {1..7}; do
+        local has_asr=false
+        local has_installer=false
+        
+        # Check if ASR image exists (only for options 1-5)
+        if [[ $original_key -le 5 ]] && [[ -f "$ASR_IMAGE_PATH${all_asr_images[$original_key]}" ]]; then
+            has_asr=true
+        fi
+        
+        # Check if installer exists
+        if [[ -d "$INSTALLER_VOLUME_PATH${all_installers[$original_key]}" ]]; then
+            has_installer=true
+        fi
+        
+        # If either method is available, add to available options
+        if [[ "$has_asr" == true ]] || [[ "$has_installer" == true ]]; then
+            available_options[$option_counter]=$original_key
+            os_names[$option_counter]="${all_os_names[$original_key]}"
+            
+            if [[ "$has_asr" == true ]]; then
+                asr_images[$option_counter]="${all_asr_images[$original_key]}"
+            fi
+            
+            if [[ "$has_installer" == true ]]; then
+                installers[$option_counter]="${all_installers[$original_key]}"
+            fi
+            
+            ((option_counter++))
+        fi
+    done
+    
+    # Check if any options are available
+    if [[ ${#available_options[@]} -eq 0 ]]; then
+        echo "Error: No macOS installation files found!"
+        echo "Please ensure ASR images are in: $ASR_IMAGE_PATH"
+        echo "And/or installer applications are in: $INSTALLER_VOLUME_PATH"
+        return 1
+    fi
+    
+    return 0
+}
+
 # Prompt for OS selection
 select_os() {
-    
     echo 
     echo "Please choose your OS:"
     for key in $(echo ${!os_names[@]} | tr ' ' '\n' | sort -n); do
@@ -110,7 +193,7 @@ select_os() {
     done
     read userOS
     
-    while ! [[ "$userOS" =~ ^[1-7]$ ]]; do
+    while ! [[ "$userOS" =~ ^[1-${#os_names[@]}]$ ]]; do
         echo "Invalid selection. Please enter a number from 1 to ${#os_names[@]}."
         read userOS
     done
@@ -118,8 +201,20 @@ select_os() {
 
 # Prompt for installation method
 select_install_method() {
+    local original_key=${available_options[$userOS]}
+    local has_asr=false
+    local has_installer=false
     
-    if [ $userOS -le 5 ] ; then
+    # Check what methods are available for this OS
+    if [[ -n "${asr_images[$userOS]}" ]]; then
+        has_asr=true
+    fi
+    
+    if [[ -n "${installers[$userOS]}" ]]; then
+        has_installer=true
+    fi
+    
+    if [[ "$has_asr" == true ]] && [[ "$has_installer" == true ]]; then
         echo
         echo "Choose installation method: 1. ASR 2. Installer Application"
         read userMethod
@@ -127,51 +222,37 @@ select_install_method() {
             echo "Invalid selection. Please enter 1 for ASR or 2 for Installer Application."
             read userMethod
         done
-    else 
+    elif [[ "$has_asr" == true ]]; then
+        echo "Using ASR method (only method available for this OS)"
+        userMethod=1
+    elif [[ "$has_installer" == true ]]; then
+        echo "Using Installer Application method (only method available for this OS)"
         userMethod=2
+    else
+        echo "Error: No installation method available for selected OS"
+        return 1
     fi
 }
 
 # Install macOS
 install_os() {
-    # Create associative arrays for file paths
-    declare -a asr_images
-    asr_images[1]="sequoia.dmg"
-    asr_images[2]="sonoma.dmg"
-    asr_images[3]="ventura.dmg"
-    asr_images[4]="monterey.dmg"
-    asr_images[5]="bigsur.dmg"
-    
-    declare -a installers
-    installers[1]="Install macOS Sequoia.app"
-    installers[2]="Install macOS Sonoma.app"
-    installers[3]="Install macOS Ventura.app"
-    installers[4]="Install macOS Monterey.app"
-    installers[5]="Install macOS Big Sur.app"
-    installers[6]="Install macOS Catalina.app"
-    installers[7]="Install macOS High Sierra.app"
-
-    
-    declare -a os_names
-    os_names[1]="Sequoia"
-    os_names[2]="Sonoma"
-    os_names[3]="Ventura"
-    os_names[4]="Monterey"
-    os_names[5]="Big Sur"
-    os_names[6]="Catalina"
-    os_names[7]="High Sierra"  
+    # Build list of available options
+    if ! build_available_options; then
+        return 1
+    fi
 
     select_os
     select_install_method
 
     format_disk
 
-    
     echo "==== starting OS installation ===="    
 
+    # Get the original key for the selected option
+    local original_key=${available_options[$userOS]}
 
     # For Sequoia installation, check internet connection first
-    if [[ "$userOS" == 1 ]]; then
+    if [[ "$original_key" == 1 ]]; then
         check_internet
     fi
     
@@ -231,4 +312,3 @@ main_menu() {
 # Main
 get_internal_disk
 main_menu
-
