@@ -123,6 +123,21 @@ select_os() {
     done
 }
 
+alt_select_os() {
+    
+    echo 
+    echo "Please choose your OS:"
+    for key in $(echo ${!alt_os_names[@]} | tr ' ' '\n' | sort -n); do
+        echo "$key: ${alt_os_names[$key]}"
+    done
+    read userOS
+    
+    while ! [[ "$userOS" =~ ^[1-7]$ ]]; do
+        echo "Invalid selection. Please enter a number from 1 to ${#alt_os_names[@]}."
+        read userOS
+    done
+}
+
 # Prompt for installation method
 select_install_method() {
     
@@ -211,7 +226,7 @@ alt_install_os() {
     alt_os_names[4]="Big Sur"
     #os_names[5]="Catalina" 
 
-    select_os
+    alt_select_os
     #select_install_method
 
     format_disk
