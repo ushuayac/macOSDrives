@@ -104,7 +104,7 @@ elevated_security() {
 alt_elevated_security() {
 	check_internet
 	format_disk
-	run_asr_restore "ALT_ES_SOURCE_PATH"
+	run_asr_restore "$ALT_ES_SOURCE_PATH"
 	}
 	
 # Prompt for OS selection
