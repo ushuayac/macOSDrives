@@ -204,11 +204,11 @@ alt_install_os() {
     
 
     
-    declare -a os_names
-    os_names[1]="Sonoma"
-    os_names[2]="Ventura"
-    os_names[3]="Monterey"
-    os_names[4]="Big Sur"
+    declare -a alt_os_names
+    alt_os_names[1]="Sonoma"
+    alt_os_names[2]="Ventura"
+    alt_os_names[3]="Monterey"
+    alt_os_names[4]="Big Sur"
     #os_names[5]="Catalina" 
 
     select_os
@@ -220,7 +220,7 @@ alt_install_os() {
     echo "==== starting OS installation ===="    
     
 	# Do ASR install by default
-    echo "${os_names[$userOS]} ASR install"
+    echo "${alt_os_names[$userOS]} ASR install"
     run_asr_restore "${alt_asr_images[$userOS]}"
 
 }
