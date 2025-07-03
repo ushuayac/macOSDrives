@@ -12,6 +12,7 @@ userQuit=0
 ASR_IMAGE_PATH="/Volumes/ASR/"
 INSTALLER_VOLUME_PATH="/Volumes/FULL/Applications/"
 ES_SOURCE_PATH="/Volumes/ASR/cat.dmg"
+ALT_ES_SOURCE_PATH="Volumes/e/cat.dmg"
 INTERNAL_VOLUME_NAME="Macintosh HD"
 INTERNAL_VOLUME_PATH="/Volumes/Macintosh HD"
 
@@ -99,7 +100,13 @@ elevated_security() {
     format_disk
     run_asr_restore "$ES_SOURCE_PATH"
 }
-
+# Alt. Elevated Security for old partition scheme
+alt_elevated_security() {
+	check_internet
+	format_disk
+	run_asr_restore "ALT_ES_SOURCE_PATH"
+	}
+	
 # Prompt for OS selection
 select_os() {
     
@@ -213,17 +220,19 @@ main_menu() {
         echo "2. Install OS"
         echo "3. Restart System"
         echo "4. Reset SMC and Clear NVRAM"
-        echo "5. Quit"
+        echo "5. Alternate Elevated Security"
+        echo "6. Quit"
         echo "================================================"
-        read -p "Enter your choice (1-5): " userinput
+        read -p "Enter your choice (1-6): " userinput
 
         case $userinput in
             1) elevated_security ;;
             2) install_os ;;
             3) restart_system ;;
             4) clear_smcnvram ;;
-            5) quit_script ;;
-            *) echo "Invalid choice. Please enter 1, 2, 3, or 4." ;;
+            5) alt_elevated_security ;;
+            6) quit_script ;;
+            *) echo "Invalid choice. Please enter 1, 2, 3, 4, or 5." ;;
         esac
     done
 }
