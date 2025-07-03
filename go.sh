@@ -191,6 +191,40 @@ install_os() {
     fi
 }
 
+# Alternative installer for old usb partition scheme
+alt_install_os() {
+    # Create array of hardcoded dmg paths in the old usb scheme
+    declare -a alt_asr_images
+    alt_asr_images[1]="/Volumes/s/Sonoma.dmg"
+    alt_asr_images[2]="/Volumes/v/ventura.dmg"
+    alt_asr_images[3]="/Volumes/m/monterey.dmg"
+    alt_asr_images[4]="/Volumes/b/bigsur.dmg"
+    #alt_asr_images[5]="catalina.dmg"
+    # No Catalina dmg in thr old scheme, besides for ES purposes?
+    
+
+    
+    declare -a os_names
+    os_names[1]="Sonoma"
+    os_names[2]="Ventura"
+    os_names[3]="Monterey"
+    os_names[4]="Big Sur"
+    #os_names[5]="Catalina" 
+
+    select_os
+    #select_install_method
+
+    format_disk
+
+    
+    echo "==== starting OS installation ===="    
+    
+	# Do ASR install by default
+    echo "${os_names[$userOS]} ASR install"
+    run_asr_restore "${alt_asr_images[$userOS]}"
+
+}
+
 # Restart system after resetting SMC and clearing NVRAM
 restart_system() {
     echo "restarting..."
@@ -221,9 +255,10 @@ main_menu() {
         echo "3. Restart System"
         echo "4. Reset SMC and Clear NVRAM"
         echo "5. Alternate Elevated Security"
-        echo "6. Quit"
+        echo "6. Alternate Install OS"
+        echo "7. Quit"
         echo "================================================"
-        read -p "Enter your choice (1-6): " userinput
+        read -p "Enter your choice (1-7): " userinput
 
         case $userinput in
             1) elevated_security ;;
@@ -231,8 +266,9 @@ main_menu() {
             3) restart_system ;;
             4) clear_smcnvram ;;
             5) alt_elevated_security ;;
-            6) quit_script ;;
-            *) echo "Invalid choice. Please enter 1, 2, 3, 4, or 5." ;;
+            6) alt_install_os ;;
+            7) quit_script ;;
+            *) echo "Invalid choice. Please enter a number 1-7." ;;
         esac
     done
 }
