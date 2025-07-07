@@ -93,6 +93,18 @@ run_manual_install() {
     echo "Starting manual install"
     "$INSTALLER_VOLUME_PATH$installer_path/Contents/Resources/startosinstall" --agreetolicense --volume "$INTERNAL_VOLUME_PATH"
 }
+# Determine partition scheme
+get_elevated_security() {
+	if test -e "/Volumes/e/cat.dmg"; then
+		echo "Legacy partition scheme found"
+		alt_elevated_security
+	elif test -e "/Volumes/ASR/cat.dmg"; then
+		echo "Device Link partition scheme found"
+		elevated_security
+	else
+		echo "Could not determine partition scheme for ES script!"
+	fi	
+}
 
 # Elevated Security
 elevated_security() {
@@ -215,7 +227,7 @@ alt_install_os() {
     alt_asr_images[3]="/Volumes/m/monterey.dmg"
     alt_asr_images[4]="/Volumes/b/bigsur.dmg"
     #alt_asr_images[5]="catalina.dmg"
-    # No Catalina dmg in thr old scheme, besides for ES purposes?
+    # No Catalina dmg in the old scheme, besides for ES purposes?
     
 
     
@@ -276,7 +288,7 @@ main_menu() {
         read -p "Enter your choice (1-7): " userinput
 
         case $userinput in
-            1) elevated_security ;;
+            1) get_elevated_security ;;
             2) install_os ;;
             3) restart_system ;;
             4) clear_smcnvram ;;
