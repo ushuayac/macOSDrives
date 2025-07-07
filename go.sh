@@ -166,6 +166,19 @@ select_install_method() {
     fi
 }
 
+get_install_os() {
+	if test -e "/Volumes/v/"; then
+		echo "Legacy partition scheme found"
+		alt_install_os
+	elif test -e "/Volumes/ASR/"; then
+		echo "Device Link partition scheme found"
+		install_os
+	else
+		echo "Could not determine partition scheme for installation script!"
+	fi	
+	
+}
+
 # Install macOS
 install_os() {
     # Create associative arrays for file paths
@@ -281,21 +294,17 @@ main_menu() {
         echo "2. Install OS"
         echo "3. Restart System"
         echo "4. Reset SMC and Clear NVRAM"
-        echo "5. Alternate Elevated Security"
-        echo "6. Alternate Install OS"
-        echo "7. Quit"
+        echo "5. Quit"
         echo "================================================"
-        read -p "Enter your choice (1-7): " userinput
+        read -p "Enter your choice (1-5): " userinput
 
         case $userinput in
             1) get_elevated_security ;;
-            2) install_os ;;
+            2) get_install_os ;;
             3) restart_system ;;
             4) clear_smcnvram ;;
-            5) alt_elevated_security ;;
-            6) alt_install_os ;;
-            7) quit_script ;;
-            *) echo "Invalid choice. Please enter a number 1-7." ;;
+            5) quit_script ;;
+            *) echo "Invalid choice. Please enter a number 1-5." ;;
         esac
     done
 }
