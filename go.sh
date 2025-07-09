@@ -2,8 +2,10 @@
 
 
 # macOS Installation and Elevated Security Removal Tool
-# v2.1-beta
+# v2.2-beta
 # https://github.com/nkerschner/macOSDrives
+
+#TODO: Update README.md 
 
 cd /
 userQuit=0
@@ -93,7 +95,17 @@ run_manual_install() {
     echo "Starting manual install"
     "$INSTALLER_VOLUME_PATH$installer_path/Contents/Resources/startosinstall" --agreetolicense --volume "$INTERNAL_VOLUME_PATH"
 }
-# Determine partition scheme
+
+alt_run_manual_install(){
+    local alt_installer_path="$1"
+
+    clear_smcnvram
+
+    echo "Starting manual install"
+	"$alt_installer_path/Contents/Resources/startosinstall" --agreetolicense --volume "$INTERNAL_VOLUME_PATH"
+}
+
+# Determine partition scheme for ES
 get_elevated_security() {
 	if test -e "/Volumes/e/cat.dmg"; then
 		echo "Legacy partition scheme found"
@@ -112,7 +124,7 @@ elevated_security() {
     format_disk
     run_asr_restore "$ES_SOURCE_PATH"
 }
-# Alt. Elevated Security for old partition scheme
+# Alt. Elevated Security for legacy partition scheme
 alt_elevated_security() {
 	check_internet
 	format_disk
@@ -239,8 +251,6 @@ alt_install_os() {
     alt_asr_images[2]="/Volumes/v/ventura.dmg"
     alt_asr_images[3]="/Volumes/m/monterey.dmg"
     alt_asr_images[4]="/Volumes/b/bigsur.dmg"
-    #alt_asr_images[5]="catalina.dmg"
-    # No Catalina dmg in the old scheme, besides for ES purposes?
     
 
     
@@ -249,20 +259,30 @@ alt_install_os() {
     alt_os_names[2]="Ventura"
     alt_os_names[3]="Monterey"
     alt_os_names[4]="Big Sur"
-    #os_names[5]="Catalina" 
+
+	# Declared as paths since the legacy partition isnt as neat as the new one T_T
+    declare -a alt_installers
+    alt_installers[1]="/Volumes/Install MacOS Sonoma/Install MacOS Sonoma.app"
+    alt_installers[2]="/Volumes/Install MacOS Ventura/Install macOS Ventura.app"
+    alt_installers[3]="/Volumes/Install MacOS Monterey/Install macOS Monterey.app"
+	alt_installers[4]="/Volumes/Install MacOS Big Sur/Install macOS Big Sur.app"
+
 
     alt_select_os
-    #select_install_method
+    select_install_method
 
     format_disk
 
     
     echo "==== starting OS installation ===="    
     
-	# Do ASR install by default
-    echo "${alt_os_names[$userOS]} ASR install"
-    run_asr_restore "${alt_asr_images[$userOS]}"
-
+    if [[ "$userMethod" == 1 ]]; then
+        echo "${alt_os_names[$userOS]} ASR install"
+        run_asr_restore "${alt_asr_images[$userOS]}"
+    elif [[ "$userMethod" == 2 ]]; then
+        echo "selected ${alt_os_names[$userOS]} manual install"
+        alt_run_manual_install "${alt_installers[$userOS]}"
+    fi
 }
 
 # Restart system after resetting SMC and clearing NVRAM
