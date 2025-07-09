@@ -11,6 +11,8 @@ Updates to the go.sh script:
 - Format the Macs drive to APFS and name it Macintosh HD
     - changed from Mac HD
     - Eliminates need to go into disk utility
+ 
+- Checks if the USB is using the new partition scheme (listed below) or the legacy scheme
     
 - Include options for launching installers from terminal in addition to ASR installation (in case ASR isn’t working)
     
@@ -76,6 +78,8 @@ Updates to cat boot
 - Formats drive0 as APFS and names it Macintosh HD
     
 - Gets input to determine ES, OS install, or reboot
+
+- Checks for which version of the partition scheme is in use (Legacy or Device Link)
     
 - ES uses ASR restore command to restore cat.dmg to Macintosh HD
     
