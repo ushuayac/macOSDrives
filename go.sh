@@ -2,7 +2,7 @@
 
 
 # macOS Installation and Elevated Security Removal Tool
-# v2.2-beta
+# v2.3-beta
 # https://github.com/nkerschner/macOSDrives
 
 #TODO: Update README.md 
