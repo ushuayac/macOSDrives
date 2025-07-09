@@ -2,8 +2,10 @@
 
 
 # macOS Installation and Elevated Security Removal Tool
-# v2.1-beta
+# v2.2-beta
 # https://github.com/nkerschner/macOSDrives
+
+#TODO: Update README.md 
 
 cd /
 userQuit=0
@@ -12,6 +14,7 @@ userQuit=0
 ASR_IMAGE_PATH="/Volumes/ASR/"
 INSTALLER_VOLUME_PATH="/Volumes/FULL/Applications/"
 ES_SOURCE_PATH="/Volumes/ASR/cat.dmg"
+ALT_ES_SOURCE_PATH="Volumes/e/cat.dmg"
 INTERNAL_VOLUME_NAME="Macintosh HD"
 INTERNAL_VOLUME_PATH="/Volumes/Macintosh HD"
 
@@ -93,13 +96,41 @@ run_manual_install() {
     "$INSTALLER_VOLUME_PATH$installer_path/Contents/Resources/startosinstall" --agreetolicense --volume "$INTERNAL_VOLUME_PATH"
 }
 
+alt_run_manual_install(){
+    local alt_installer_path="$1"
+
+    clear_smcnvram
+
+    echo "Starting manual install"
+	"$alt_installer_path/Contents/Resources/startosinstall" --agreetolicense --volume "$INTERNAL_VOLUME_PATH"
+}
+
+# Determine partition scheme for ES
+get_elevated_security() {
+	if test -e "/Volumes/e/cat.dmg"; then
+		echo "Legacy partition scheme found"
+		alt_elevated_security
+	elif test -e "/Volumes/ASR/cat.dmg"; then
+		echo "Device Link partition scheme found"
+		elevated_security
+	else
+		echo "Could not determine partition scheme for ES script!"
+	fi	
+}
+
 # Elevated Security
 elevated_security() {
     check_internet
     format_disk
     run_asr_restore "$ES_SOURCE_PATH"
 }
-
+# Alt. Elevated Security for legacy partition scheme
+alt_elevated_security() {
+	check_internet
+	format_disk
+	run_asr_restore "$ALT_ES_SOURCE_PATH"
+	}
+	
 # Prompt for OS selection
 select_os() {
     
@@ -112,6 +143,21 @@ select_os() {
     
     while ! [[ "$userOS" =~ ^[1-7]$ ]]; do
         echo "Invalid selection. Please enter a number from 1 to ${#os_names[@]}."
+        read userOS
+    done
+}
+
+alt_select_os() {
+    
+    echo 
+    echo "Please choose your OS:"
+    for key in $(echo ${!alt_os_names[@]} | tr ' ' '\n' | sort -n); do
+        echo "$key: ${alt_os_names[$key]}"
+    done
+    read userOS
+    
+    while ! [[ "$userOS" =~ ^[1-7]$ ]]; do
+        echo "Invalid selection. Please enter a number from 1 to ${#alt_os_names[@]}."
         read userOS
     done
 }
@@ -130,6 +176,19 @@ select_install_method() {
     else 
         userMethod=2
     fi
+}
+
+get_install_os() {
+	if test -e "/Volumes/v/"; then
+		echo "Legacy partition scheme found"
+		alt_install_os
+	elif test -e "/Volumes/ASR/"; then
+		echo "Device Link partition scheme found"
+		install_os
+	else
+		echo "Could not determine partition scheme for installation script!"
+	fi	
+	
 }
 
 # Install macOS
@@ -184,6 +243,48 @@ install_os() {
     fi
 }
 
+# Alternative installer for old usb partition scheme
+alt_install_os() {
+    # Create array of hardcoded dmg paths in the old usb scheme
+    declare -a alt_asr_images
+    alt_asr_images[1]="/Volumes/s/Sonoma.dmg"
+    alt_asr_images[2]="/Volumes/v/ventura.dmg"
+    alt_asr_images[3]="/Volumes/m/monterey.dmg"
+    alt_asr_images[4]="/Volumes/b/bigsur.dmg"
+    
+
+    
+    declare -a alt_os_names
+    alt_os_names[1]="Sonoma"
+    alt_os_names[2]="Ventura"
+    alt_os_names[3]="Monterey"
+    alt_os_names[4]="Big Sur"
+
+	# Declared as paths since the legacy partition isnt as neat as the new one T_T
+    declare -a alt_installers
+    alt_installers[1]="/Volumes/Install MacOS Sonoma/Install MacOS Sonoma.app"
+    alt_installers[2]="/Volumes/Install MacOS Ventura/Install macOS Ventura.app"
+    alt_installers[3]="/Volumes/Install MacOS Monterey/Install macOS Monterey.app"
+	alt_installers[4]="/Volumes/Install MacOS Big Sur/Install macOS Big Sur.app"
+
+
+    alt_select_os
+    select_install_method
+
+    format_disk
+
+    
+    echo "==== starting OS installation ===="    
+    
+    if [[ "$userMethod" == 1 ]]; then
+        echo "${alt_os_names[$userOS]} ASR install"
+        run_asr_restore "${alt_asr_images[$userOS]}"
+    elif [[ "$userMethod" == 2 ]]; then
+        echo "selected ${alt_os_names[$userOS]} manual install"
+        alt_run_manual_install "${alt_installers[$userOS]}"
+    fi
+}
+
 # Restart system after resetting SMC and clearing NVRAM
 restart_system() {
     echo "restarting..."
@@ -218,12 +319,12 @@ main_menu() {
         read -p "Enter your choice (1-5): " userinput
 
         case $userinput in
-            1) elevated_security ;;
-            2) install_os ;;
+            1) get_elevated_security ;;
+            2) get_install_os ;;
             3) restart_system ;;
             4) clear_smcnvram ;;
             5) quit_script ;;
-            *) echo "Invalid choice. Please enter 1, 2, 3, or 4." ;;
+            *) echo "Invalid choice. Please enter a number 1-5." ;;
         esac
     done
 }
