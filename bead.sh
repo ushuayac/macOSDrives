@@ -3,15 +3,6 @@
 echo "Enter the user and IP of your BEAD Host (e.g. example@127.0.0.1): "
 read BEAD_HOST
 
-
-
-if networksetup -setairportnetwork en0 Aaxl "\][poiuy"; then
-    echo "network connected"
-else
-    echo "could not connect to network. exiting"
-    exit 1
-fi
-
 if scp -o StrictHostKeyChecking=no -r $BEAD_HOST:~/Desktop/Bead\ Agent /Users/shared/; then
     echo "successfully copied Bead Agent files"
 else
