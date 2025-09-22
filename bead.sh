@@ -18,7 +18,7 @@ open_agent() {
     open -a "Bead Agent"
 }
 
-finishing_steps() {
+clean_up() {
     echo "Once finished with diagnostic testing, type y to remove the files"
     read removeFiles
     while [ "$removeFiles" != "y" ]; do
@@ -31,4 +31,4 @@ finishing_steps() {
 get_bead_host
 copy_agent_from_host
 open_agent
-finishing_steps
+clean_up
