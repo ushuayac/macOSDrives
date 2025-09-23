@@ -8,7 +8,12 @@ eject_usb() {
 }
 
 copy_agent_from_usb() {
-    cp -R "/Volumes/BLANCCO/BEAD Agent" /Users/Shared/
+    if cp -R "/Volumes/BLANCCO/BEAD Agent" /Users/Shared/; then
+        echo "successfully copied BEAD Agent files"
+    else
+    echo "Could not copy necessary files. Exiting..."
+        exit 1
+    fi
 }
 
 get_bead_host() {
@@ -17,9 +22,9 @@ get_bead_host() {
 
 copy_agent_from_host() {
     if scp -o StrictHostKeyChecking=no -r $BEAD_HOST:~/Desktop/Bead\ Agent /Users/shared/; then
-        echo "successfully copied Bead Agent files"
+        echo "successfully copied BEAD Agent files"
     else
-        echo "exiting"
+        echo "Could not copy necessary files. Exiting..."
         exit 1
     fi
 }
@@ -29,12 +34,10 @@ open_agent() {
 }
 
 clean_up() {
-    read -p "Once finished with diagnostic testing, type y to remove the files: " removeFiles
-    while [ "$removeFiles" != "y" ]; do
-        read -p "Once finished with diagnostic testing, type y to remove the files: " removeFiles
-    done
+    read -p "Once finished with diagnostic testing, press enter to remove the files: " removeFiles
     rm -rf "/Users/Shared/Bead Agent"
 }
+
 
 # Main
 if mount_usb; then
