@@ -30,7 +30,10 @@ copy_agent_from_host() {
 }
 
 open_agent() {
-    open -a "Bead Agent"
+    if ! [ open -a "Bead Agent" ]; then
+        sleep 5
+        open -a "BEAD Agent"
+    fi
 }
 
 clean_up() {
