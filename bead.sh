@@ -3,6 +3,10 @@ mount_usb() {
     diskutil mount $(diskutil list | grep -i blancco | awk '{print $NF}')
 }
 
+eject_usb() {
+    diskutil eject /Volumes/BLANCCO
+}
+
 copy_agent_from_usb() {
     cp -R "/Volumes/BLANCCO/BEAD Agent" /Users/Shared/
 }
@@ -35,6 +39,7 @@ clean_up() {
 # Main
 if mount_usb; then
     copy_agent_from_usb
+    eject_usb
 else
     get_bead_host
     copy_agent_from_host
