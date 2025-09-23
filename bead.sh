@@ -31,7 +31,9 @@ copy_agent_from_host() {
 
 open_agent() {
     echo "Opening BEAD Agent"
-    if ! [ open -a "BEAD Agent" ]; then
+    if  open -a "BEAD Agent" ; then
+        echo "Successfully opened BEAD Agent"
+    else
         echo "Failed to open BEAD Agent, trying again in 5 seconds"
         sleep 5
         open -a "BEAD Agent"
