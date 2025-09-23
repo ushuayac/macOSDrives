@@ -1,8 +1,14 @@
 #!/bin/bash
+mount_usb() {
+    diskutil mount $(diskutil list | grep -i blancco | awk '{print $NF}')
+}
+
+copy_agent_from_usb() {
+    cp -R "/Volumes/BLANCCO/BEAD Agent" /Users/Shared/
+}
 
 get_bead_host() {
-    echo "Enter the user and IP of your BEAD Host (e.g. example@127.0.0.1): "
-    read BEAD_HOST
+    read -p "Enter the user and IP of your BEAD Host (e.g. example@127.0.0.1): " BEAD_HOST
 }
 
 copy_agent_from_host() {
@@ -28,7 +34,12 @@ clean_up() {
 }
 
 # Main
-get_bead_host
-copy_agent_from_host
+if mount_usb; then
+    copy_agent_from_usb
+else
+    get_bead_host
+    copy_agent_from_host
+fi
+
 open_agent
 clean_up
