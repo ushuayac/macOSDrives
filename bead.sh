@@ -25,10 +25,9 @@ open_agent() {
 }
 
 clean_up() {
-    echo "Once finished with diagnostic testing, type y to remove the files"
-    read removeFiles
+    read -p "Once finished with diagnostic testing, type y to remove the files" removeFiles
     while [ "$removeFiles" != "y" ]; do
-        echo "Once finished with diagnostic testing, type y to remove the files"
+        read -p "Once finished with diagnostic testing, type y to remove the files" removeFiles
     done
     rm -rf "/Users/Shared/Bead Agent"
 }
