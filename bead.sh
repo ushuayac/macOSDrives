@@ -30,7 +30,6 @@ copy_agent_from_host() {
 }
 
 open_agent() {
-    sleep 5
     echo "Opening BEAD Agent"
     open -a "BEAD Agent"
 }
