@@ -1,6 +1,6 @@
 #!/bin/bash
 mount_usb() {
-    diskutil mount $(diskutil list | grep -i blancco | awk '{print $NF}')
+    diskutil mount "$(diskutil list | grep -i blancco | awk '{print $NF}')"
 }
 
 eject_usb() {
@@ -9,7 +9,7 @@ eject_usb() {
 
 copy_agent_from_usb() {
     if cp -R "/Volumes/BLANCCO/BEAD Agent" /Users/Shared/; then
-        echo "successfully copied BEAD Agent files"
+        echo "Successfully copied BEAD Agent files"
     else
     echo "Could not copy necessary files. Exiting..."
         exit 1
@@ -32,6 +32,15 @@ copy_agent_from_host() {
 open_agent() {
     echo "Opening BEAD Agent"
     open -a "BEAD Agent"
+
+    # Check if BEAD Agent was succesfully opened, otherwise open Finder to the BEAD directory for a manual start
+    # BEAD Agent sometimes fails to start on M1 Macbooks and needs to be opened manually
+    if pgrep -q "BEAD Agent"; then
+        echo "BEAD Agent succesfully started!"
+    else
+        echo "Can't find BEAD Agent window! Please start the application manually."
+        open "/Users/Shared"
+    fi
 }
 
 clean_up() {
@@ -39,15 +48,25 @@ clean_up() {
     rm -rf "/Users/Shared/Bead Agent"
 }
 
+# Opens Photo Booth to prime the webcam for BEAD Agent testing
+prep_webcam() {
+    echo "Preparing webcam for testing."
+    open -a "Photo Booth"
+    # sleep 5
+    # killall -9 "Photo Booth"
+}
 
 # Main
 if mount_usb; then
+    echo "Copying BEAD Agent from USB..."
     copy_agent_from_usb
     eject_usb
 else
+    echo "No USB present, BEAD Agent must be fetched from BEAD Host."
     get_bead_host
     copy_agent_from_host
 fi
 
+prep_webcam
 open_agent
 clean_up
