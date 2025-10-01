@@ -39,6 +39,13 @@ clean_up() {
     rm -rf "/Users/Shared/Bead Agent"
 }
 
+# Opens and closes Photo Booth to prime the webcam for BEAD Agent testing
+prep_webcam() {
+    echo "Preparing webcam for testing."
+    open -a "Photo Booth"
+    sleep 5
+    killall -9 "Photo Booth"
+}
 
 # Main
 if mount_usb; then
@@ -49,5 +56,6 @@ else
     copy_agent_from_host
 fi
 
+prep_webcam
 open_agent
 clean_up
