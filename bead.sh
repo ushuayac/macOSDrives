@@ -1,6 +1,6 @@
 #!/bin/bash
 mount_usb() {
-    diskutil mount $(diskutil list | grep -i blancco | awk '{print $NF}')
+    diskutil mount "$(diskutil list | grep -i blancco | awk '{print $NF}')"
 }
 
 eject_usb() {
