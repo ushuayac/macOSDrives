@@ -32,6 +32,15 @@ copy_agent_from_host() {
 open_agent() {
     echo "Opening BEAD Agent"
     open -a "BEAD Agent"
+
+    # Check if BEAD Agent was succesfully opened, otherwise open Finder to the BEAD directory for a manual start
+    # BEAD Agent sometimes fails to start on M1 Macbooks and needs to be opened manually
+    if pgrep "BEAD Agent"; then
+        echo "BEAD Agent succesfully started!"
+    else
+        echo "Can't find BEAD Agent window! Please start the application manually."
+        open "/Users/Shared/Bead Agent"
+    fi
 }
 
 clean_up() {
