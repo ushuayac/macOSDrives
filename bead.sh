@@ -39,12 +39,12 @@ clean_up() {
     rm -rf "/Users/Shared/Bead Agent"
 }
 
-# Opens and closes Photo Booth to prime the webcam for BEAD Agent testing
+# Opens Photo Booth to prime the webcam for BEAD Agent testing
 prep_webcam() {
     echo "Preparing webcam for testing."
     open -a "Photo Booth"
-    sleep 5
-    killall -9 "Photo Booth"
+    # sleep 5
+    # killall -9 "Photo Booth"
 }
 
 # Main
