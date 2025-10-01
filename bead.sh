@@ -9,7 +9,7 @@ eject_usb() {
 
 copy_agent_from_usb() {
     if cp -R "/Volumes/BLANCCO/BEAD Agent" /Users/Shared/; then
-        echo "successfully copied BEAD Agent files"
+        echo "Successfully copied BEAD Agent files"
     else
     echo "Could not copy necessary files. Exiting..."
         exit 1
@@ -49,9 +49,11 @@ prep_webcam() {
 
 # Main
 if mount_usb; then
+    echo "Copying BEAD Agent from USB..."
     copy_agent_from_usb
     eject_usb
 else
+    echo "No USB present, BEAD Agent must be fetched from BEAD Host."
     get_bead_host
     copy_agent_from_host
 fi
