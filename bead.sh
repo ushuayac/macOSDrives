@@ -35,7 +35,7 @@ open_agent() {
 
     # Check if BEAD Agent was succesfully opened, otherwise open Finder to the BEAD directory for a manual start
     # BEAD Agent sometimes fails to start on M1 Macbooks and needs to be opened manually
-    if pgrep "BEAD Agent"; then
+    if pgrep -q "BEAD Agent"; then
         echo "BEAD Agent succesfully started!"
     else
         echo "Can't find BEAD Agent window! Please start the application manually."
