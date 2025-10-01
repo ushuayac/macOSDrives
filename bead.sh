@@ -39,7 +39,7 @@ open_agent() {
         echo "BEAD Agent succesfully started!"
     else
         echo "Can't find BEAD Agent window! Please start the application manually."
-        open "/Users/Shared/Bead Agent"
+        open "/Users/Shared"
     fi
 }
 
