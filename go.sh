@@ -98,7 +98,7 @@ declare -a Sequoia=("Mac16,8" "Mac16,7" "Mac16,6" "Mac16,5" "Mac16,1" \
 # Get the internal disk
 get_internal_disk() {
     echo "==== detecting internal disks ===="
-    INTERNAL_DISKS=($(diskutil list internal physical | awk '/^\/dev\// && !/disk[0-9]s[0-9]/ {print $1}'))
+    INTERNAL_DISKS=("$(diskutil list internal physical | awk '/^\/dev\// && !/disk[0-9]s[0-9]/ {print $1}')")
 
     if [ ${#INTERNAL_DISKS[@]} -eq 0 ]; then
         echo "No internal disks found! Exiting..."
@@ -212,7 +212,7 @@ select_os() {
     
     echo 
     echo "Please choose your OS:"
-    for key in $(echo ${!os_names[@]} | tr ' ' '\n' | sort -n); do
+    for key in $(echo "${!os_names[@]}" | tr ' ' '\n' | sort -n); do
         echo "$key: ${os_names[$key]}"
     done
     read userOS
@@ -227,7 +227,7 @@ alt_select_os() {
     
     echo 
     echo "Please choose your OS:"
-    for key in $(echo ${!alt_os_names[@]} | tr ' ' '\n' | sort -n); do
+    for key in $(echo "${!alt_os_names[@]}" | tr ' ' '\n' | sort -n); do
         echo "$key: ${alt_os_names[$key]}"
     done
     read userOS
@@ -300,7 +300,7 @@ get_install_os() {
 		echo "Legacy partition scheme found"
 		alt_install_os
 	elif test -e "/Volumes/FULL/"; then
-		echo "Device Link partition scheme found"
+		echo "Updated partition scheme found"
 		install_os
 	else
 		echo "Could not determine partition scheme for installation script!"
@@ -319,6 +319,7 @@ install_os() {
     asr_images[5]="bigsur.dmg"
     
     declare -a installers
+    installers[1]="Install macOS Tahoe.app"
     installers[1]="Install macOS Sequoia.app"
     installers[2]="Install macOS Sonoma.app"
     installers[3]="Install macOS Ventura.app"
@@ -326,16 +327,16 @@ install_os() {
     installers[5]="Install macOS Big Sur.app"
     installers[6]="Install macOS Catalina.app"
     installers[7]="Install macOS High Sierra.app"
-
     
     declare -a os_names
-    os_names[1]="Sequoia"
-    os_names[2]="Sonoma"
-    os_names[3]="Ventura"
-    os_names[4]="Monterey"
-    os_names[5]="Big Sur"
-    os_names[6]="Catalina"
-    os_names[7]="High Sierra"  
+    os_names[1]="Tahoe"
+    os_names[2]="Sequoia"
+    os_names[3]="Sonoma"
+    os_names[4]="Ventura"
+    os_names[5]="Monterey"
+    os_names[6]="Big Sur"
+    os_names[7]="Catalina"
+    os_names[8]="High Sierra"  
 
     select_os
     select_install_method
@@ -345,12 +346,6 @@ install_os() {
     
     echo "==== starting OS installation ===="    
 
-
-    # For Sequoia installation, check internet connection first
-    if [[ "$userOS" == 1 ]]; then
-        check_internet
-    fi
-    
     if [[ "$userMethod" == 1 ]]; then
         echo "${os_names[$userOS]} ASR install"
         run_asr_restore "$ASR_IMAGE_PATH${asr_images[$userOS]}"
@@ -368,8 +363,6 @@ alt_install_os() {
     alt_asr_images[2]="/Volumes/v/ventura.dmg"
     alt_asr_images[3]="/Volumes/m/monterey.dmg"
     alt_asr_images[4]="/Volumes/b/bigsur.dmg"
-    
-
     
     declare -a alt_os_names
     alt_os_names[1]="Sonoma"
