@@ -95,6 +95,18 @@ declare -a Sequoia=("Mac16,8" "Mac16,7" "Mac16,6" "Mac16,5" "Mac16,1" \
     "Mac14,14" "Mac14,13" "Mac13,2" "Mac13,1" "Mac14,8" \
     "MacPro7,1")
 
+declare -a Tahoe=("Mac16,8" "Mac16,7" "Mac16,6" "Mac16,5" "Mac16,1"
+    "Mac15,11" "Mac15,10" "Mac15,9" "Mac15,8" "Mac15,7"
+    "Mac15,6" "Mac15,3" "Mac14,10" "Mac14,9" "Mac14,7"
+    "Mac14,6" "Mac14,5" "MacBookPro18,4" "MacBookPro18,3" "MacBookPro18,2"
+    "MacBookPro18,1" "MacBookPro17,1" "MacBookPro16,4" "MacBookPro16,2" "MacBookPro16,1"
+    "Mac16,13" "Mac16,12" "Mac15,13" "Mac15,12" "Mac14,15"
+    "Mac14,2" "MacBookAir10,1" "Mac16,3" "Mac16,2" "Mac15,5"
+    "Mac15,4" "iMac21,2" "iMac21,1" "iMac20,2" "iMac20,1"
+    "Mac16,11" "Mac16,10" "Mac14,3" "Mac14,12" "Macmini9,1"
+    "Mac16,9" "Mac15,14" "Mac14,14" "Mac14,13" "Mac13,2"
+    "Mac13,1" "Mac14,8" "MacPro7,1")
+
 # Get the internal disk
 get_internal_disk() {
     echo "==== detecting internal disks ===="
@@ -271,6 +283,10 @@ get_install_os() {
     echo "Device Model: $model"
 
     # Run a version compatibility check for the current device model
+    if hasVersion "$model" "${Tahoe[@]}"; then printf "Tahoe: ✔ "
+    else printf "Tahoe: ✖ "
+    fi
+
     if hasVersion "$model" "${Sequoia[@]}"; then printf "Sequoia: ✔ "
     else printf "Sequoia: ✖ "
     fi
@@ -319,7 +335,7 @@ install_os() {
     asr_images[5]="bigsur.dmg"
     
     declare -a installers
-    installers[1]="Install macOS Tahoe.app"
+    #installers[1]="Install macOS Tahoe.app"
     installers[1]="Install macOS Sequoia.app"
     installers[2]="Install macOS Sonoma.app"
     installers[3]="Install macOS Ventura.app"
@@ -329,14 +345,14 @@ install_os() {
     installers[7]="Install macOS High Sierra.app"
     
     declare -a os_names
-    os_names[1]="Tahoe"
-    os_names[2]="Sequoia"
-    os_names[3]="Sonoma"
-    os_names[4]="Ventura"
-    os_names[5]="Monterey"
-    os_names[6]="Big Sur"
-    os_names[7]="Catalina"
-    os_names[8]="High Sierra"  
+    #os_names[1]="Tahoe"
+    os_names[1]="Sequoia"
+    os_names[2]="Sonoma"
+    os_names[3]="Ventura"
+    os_names[4]="Monterey"
+    os_names[5]="Big Sur"
+    os_names[6]="Catalina"
+    os_names[7]="High Sierra"  
 
     select_os
     select_install_method
