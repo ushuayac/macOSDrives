@@ -224,13 +224,13 @@ select_os() {
     
     echo 
     echo "Please choose your OS:"
-    for key in $(echo "${!os_names[@]}" | tr ' ' '\n' | sort -n); do
-        echo "$key: ${os_names[$key]}"
+    for key in $(echo "${!os_available[@]}" | tr ' ' '\n' | sort -n); do
+        echo "$key: ${os_available[$key]}"
     done
     read userOS
     
-    while ! [[ "$userOS" =~ ^[1-7]$ ]]; do
-        echo "Invalid selection. Please enter a number from 1 to ${#os_names[@]}."
+    while ! [[ "$userOS" =~ ^[1-${#os_available[@]}]$ ]]; do
+        echo "Invalid selection. Please enter a number from 1 to ${#os_available[@]}."
         read userOS
     done
 }
@@ -253,17 +253,13 @@ alt_select_os() {
 # Prompt for installation method
 select_install_method() {
     
-    if [ "$userOS" -le 5 ] ; then
-        echo
-        echo "Choose installation method: 1. ASR 2. Manual install"
+    echo
+    echo "Choose installation method: 1. ASR 2. Manual install"
+    read userMethod
+    while ! [[ "$userMethod" =~ ^[1-2]$ ]]; do
+        echo "Invalid selection. Please enter 1 for ASR or 2 for Manual install."
         read userMethod
-        while ! [[ "$userMethod" =~ ^[1-2]$ ]]; do
-            echo "Invalid selection. Please enter 1 for ASR or 2 for Manual install."
-            read userMethod
-        done
-    else 
-        userMethod=2
-    fi
+    done
 }
 
 # Run through a passed array of Mac devices to see if our device is included in that version array
@@ -283,34 +279,35 @@ get_install_os() {
     echo "Device Model: $model"
 
     # Run a version compatibility check for the current device model
-    if hasVersion "$model" "${Tahoe[@]}"; then printf "Tahoe: ✔ "
-    else printf "Tahoe: ✖ "
+    if hasVersion "$model" "${Tahoe[@]}"; then printf "| Tahoe: ✔ | "
+    else printf "| Tahoe: ✖ | "
     fi
 
-    if hasVersion "$model" "${Sequoia[@]}"; then printf "Sequoia: ✔ "
-    else printf "Sequoia: ✖ "
+    if hasVersion "$model" "${Sequoia[@]}"; then printf "Sequoia: ✔ | "
+    else printf "Sequoia: ✖ | "
     fi
 
-    if hasVersion "$model" "${Sonoma[@]}"; then printf "Sonoma: ✔ "
-    else printf "Sonoma: ✖ "
+    if hasVersion "$model" "${Sonoma[@]}"; then printf "Sonoma: ✔ | "
+    else printf "Sonoma: ✖ | "
     fi
 
-    if hasVersion "$model" "${Ventura[@]}"; then printf "Ventura: ✔ "
-    else printf "Ventura: ✖ "
+    if hasVersion "$model" "${Ventura[@]}"; then printf "Ventura: ✔ |\n"
+    else printf "Ventura: ✖ |\n"
     fi
 
-    if hasVersion "$model" "${Monterey[@]}"; then printf "Monterey: ✔ "
-    else printf "Monterey: ✖ "
+    if hasVersion "$model" "${Monterey[@]}"; then printf "| Monterey: ✔ | "
+    else printf "| Monterey: ✖ | "
     fi
 
-    if hasVersion "$model" "${BigSur[@]}"; then printf "Big Sur: ✔ "
-    else printf "Big Sur: ✖ "
+    if hasVersion "$model" "${BigSur[@]}"; then printf "Big Sur: ✔ | "
+    else printf "Big Sur: ✖ | "
     fi
 
-    if hasVersion "$model" "${Catalina[@]}"; then printf "Catalina: ✔\n"
-    else printf "Catalina: ✖\n"
+    if hasVersion "$model" "${Catalina[@]}"; then printf "Catalina: ✔ |\n"
+    else printf "Catalina: ✖ |\n"
     fi
     echo
+
     # Determine which partition scheme we are in
 	if test -e "/Volumes/e/"; then
 		echo "Legacy partition scheme found"
@@ -321,6 +318,9 @@ get_install_os() {
 	else
 		echo "Could not determine partition scheme for installation script!"
 	fi	
+
+    # We need internet for installs to work
+    check_internet
 	
 }
 
@@ -328,31 +328,80 @@ get_install_os() {
 install_os() {
     # Create associative arrays for file paths
     declare -a asr_images
-    asr_images[1]="sequoia.dmg"
-    asr_images[2]="sonoma.dmg"
-    asr_images[3]="ventura.dmg"
-    asr_images[4]="monterey.dmg"
-    asr_images[5]="bigsur.dmg"
+    asr_images[1]="tahoe.dmg"
+    asr_images[2]="sequoia.dmg"
+    asr_images[3]="sonoma.dmg"
+    asr_images[4]="ventura.dmg"
+    asr_images[5]="monterey.dmg"
+    asr_images[6]="bigsur.dmg"
+    asr_images[7]="catalina.dmg"
+    
     
     declare -a installers
-    #installers[1]="Install macOS Tahoe.app"
-    installers[1]="Install macOS Sequoia.app"
-    installers[2]="Install macOS Sonoma.app"
-    installers[3]="Install macOS Ventura.app"
-    installers[4]="Install macOS Monterey.app"
-    installers[5]="Install macOS Big Sur.app"
-    installers[6]="Install macOS Catalina.app"
-    installers[7]="Install macOS High Sierra.app"
+    installers[1]="Install macOS Tahoe.app"
+    installers[2]="Install macOS Sequoia.app"
+    installers[3]="Install macOS Sonoma.app"
+    installers[4]="Install macOS Ventura.app"
+    installers[5]="Install macOS Monterey.app"
+    installers[6]="Install macOS Big Sur.app"
+    installers[7]="Install macOS Catalina.app"
     
     declare -a os_names
-    #os_names[1]="Tahoe"
-    os_names[1]="Sequoia"
-    os_names[2]="Sonoma"
-    os_names[3]="Ventura"
-    os_names[4]="Monterey"
-    os_names[5]="Big Sur"
-    os_names[6]="Catalina"
-    os_names[7]="High Sierra"  
+    os_names[1]="Tahoe"
+    os_names[2]="Sequoia"
+    os_names[3]="Sonoma"
+    os_names[4]="Ventura"
+    os_names[5]="Monterey"
+    os_names[6]="Big Sur"
+    os_names[7]="Catalina"
+
+    declare -a os_available[]
+    declare -a asr_available[]
+    declare -a installers_available[]
+
+    # Blank element that we unset after the loop to avoid assiging a value to index 0
+    os_available[0]=""
+
+    # Iterate through all the OS we want to check for (os_names) then add existing ones to os_available
+    for (( i = 0; i <= ${#os_names[@]}; i++ )); do
+
+        # If we find the .app installer then add it to the options
+        if test -e "$INSTALLER_VOLUME_PATH""${installers[i]}"; then
+            #echo "FOUND" "${installers[i]}"
+
+            # If we have this OS on the list, just add to the Installers list. Otherwise, add to both lists.
+            if [[ "${os_available[i]}" = "${os_names[i]}" || "${os_available[i-1]}" = "${os_names[i]}" ]]; then
+                #echo Already added "${os_names[i]}"
+                installers_available+=("${installers[i]}")
+            else
+                os_available+=("${os_names[i]}")
+                installers_available+=("${installers[i]}")
+            fi
+            
+        fi   
+
+        # If we find the .dmg file for ASR restore, add it to the options
+        if test -e "$ASR_IMAGE_PATH""${asr_images[i]}"; then
+            #echo "FOUND" "${asr_images[i]}"
+
+            # If we have this OS on the list, just add to the ASR list. Otherwise, add to both lists.
+            if [[ "${os_available[i]}" = "${os_names[i]}" || "${os_available[i-1]}" = "${os_names[i]}" ]]; then
+                #echo Already added "${os_names[i]}"
+                asr_available+=("${asr_images[i]}")
+            else
+                os_available+=("${os_names[i]}")
+                asr_available+=("${asr_images[i]}")
+            fi            
+
+        fi
+    done
+
+    # Workaround so we dont print a blank option
+    unset "os_available[0]"
+
+    #DEBUG:
+    #echo "${asr_available[@]}"
+    #echo "${installers_available[@]}"
 
     select_os
     select_install_method
