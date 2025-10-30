@@ -318,10 +318,6 @@ get_install_os() {
 	else
 		echo "Could not determine partition scheme for installation script!"
 	fi	
-
-    # We need internet for installs to work
-    check_internet
-	
 }
 
 # Install macOS
@@ -405,6 +401,9 @@ install_os() {
 
     select_os
     select_install_method
+    
+    # We need internet for installs to work
+    check_internet
 
     format_disk
 
@@ -446,6 +445,9 @@ alt_install_os() {
     alt_select_os
     select_install_method
 
+    # We need internet for installs to work
+    check_internet
+    
     format_disk
 
     
